@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviereport/src/screen/feed/page1.dart';
-import 'package:moviereport/src/screen/feed/movieListScreen.dart';
+import 'package:moviereport/src/screen/feed/movie_list_screen.dart';
 import 'package:moviereport/src/screen/feed/page3.dart';
 
 class Home extends StatelessWidget {

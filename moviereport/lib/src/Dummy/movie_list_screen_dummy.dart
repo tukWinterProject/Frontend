@@ -1,11 +1,11 @@
-class MovieDummy {
+class MovieListDummy {
   final String imageUrl;
   final String title;
   final String genre;
   final String isShowing;
   final String date;
 
-  MovieDummy({
+  MovieListDummy({
     required this.imageUrl,
     required this.title,
     required this.genre,
@@ -14,43 +14,43 @@ class MovieDummy {
   });
 }
 
-List<MovieDummy> dummyMovies = [
-  MovieDummy(
+List<MovieListDummy> dummyMoviesList = [
+  MovieListDummy(
     imageUrl: 'assets/example.png',
     title: '범죄도시',
     genre: '액션',
     isShowing: "상영중",
     date: '2020.10.20~',
   ),
-  MovieDummy(
+  MovieListDummy(
     imageUrl: 'assets/example.png',
     title: '범죄도시',
     genre: '액션',
     isShowing: "상영중",
     date: '2020.10.20~',
   ),
-  MovieDummy(
+  MovieListDummy(
     imageUrl: 'assets/example.png',
     title: '범죄도시',
     genre: '액션',
     isShowing: "상영중",
     date: '2020.10.20~',
   ),
-  MovieDummy(
+  MovieListDummy(
     imageUrl: 'assets/example.png',
     title: '범죄도시',
     genre: '액션',
     isShowing: "상영중",
     date: '2020.10.20~',
   ),
-  MovieDummy(
+  MovieListDummy(
     imageUrl: 'assets/example.png',
     title: '범죄도시',
     genre: '액션',
     isShowing: "상영중",
     date: '2020.10.20~',
   ),
-  MovieDummy(
+  MovieListDummy(
     imageUrl: 'assets/example.png',
     title: '범죄도시',
     genre: '액션',
