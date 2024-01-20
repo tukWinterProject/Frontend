@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:moviereport/src/screen/widget/MovieList/dummy.dart';
+import 'package:moviereport/src/Dummy/movie_list_screen_dummy.dart';
+import 'package:moviereport/src/screen/feed/reviews.dart';
 
 class MovieItem extends StatelessWidget {
-  final MovieDummy movie; // Movie 객체를 추가합니다.
+  final MovieListDummy movie; // Movie 객체를 추가합니다.
   const MovieItem({Key? key, required this.movie}) : super(key: key);
 
   @override
@@ -88,7 +89,12 @@ class MovieItem extends StatelessWidget {
                                 backgroundColor:
                                     Color.fromARGB(255, 236, 19, 19),
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const Reviews()));
+                              },
                               child: Text(" 리뷰 보기",
                                   style: TextStyle(
                                     color: Color.fromARGB(255, 255, 255, 255),
