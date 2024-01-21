@@ -10,6 +10,7 @@ class Reviews extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context); //뒤로가기
