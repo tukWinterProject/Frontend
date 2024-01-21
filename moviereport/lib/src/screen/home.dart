@@ -12,11 +12,15 @@ class Home extends StatelessWidget {
         length: 3,
         child: Scaffold(
             appBar: AppBar(
-              backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
+              backgroundColor: Color.fromARGB(255, 255, 255, 255),
             ),
             bottomNavigationBar: Container(
               color: const Color.fromRGBO(240, 240, 240, 1), // TabBar 배경색 설정
               child: TabBar(
+                indicatorColor: Colors.transparent, // 선택된 탭 밑줄 색상
+                labelColor: const Color.fromRGBO(255, 55, 67, 1), // 선택된 탭 색상
+                unselectedLabelColor:
+                    const Color.fromRGBO(175, 175, 175, 1), // 선택되지 않은 탭 색상
                 tabs: const [
                   Tab(icon: Icon(Icons.home), text: '홈'),
                   Tab(icon: Icon(Icons.format_list_bulleted), text: '영화 목록'),
@@ -24,12 +28,15 @@ class Home extends StatelessWidget {
                 ],
               ),
             ),
-            body: const TabBarView(
-              children: [
-                Page1(),
-                MovieListScreen(),
-                Page3(),
-              ],
+            body: Container(
+              color: Color.fromARGB(255, 255, 255, 255),
+              child: TabBarView(
+                children: const [
+                  Page1(),
+                  MovieListScreen(),
+                  Page3(),
+                ],
+              ),
             )));
   }
 }
