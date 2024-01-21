@@ -28,12 +28,15 @@ class Home extends StatelessWidget {
                 ],
               ),
             ),
-            body: const TabBarView(
-              children: [
-                Page1(),
-                MovieListScreen(),
-                Page3(),
-              ],
+            body: Container(
+              color: Color.fromARGB(255, 255, 255, 255),
+              child: TabBarView(
+                children: const [
+                  Page1(),
+                  MovieListScreen(),
+                  Page3(),
+                ],
+              ),
             )));
   }
 }
