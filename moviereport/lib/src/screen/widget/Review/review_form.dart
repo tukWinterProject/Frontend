@@ -74,7 +74,8 @@ class _ReviewFormState extends State<ReviewForm> {
               padding: EdgeInsets.only(left: 2),
               child: TextFormField(
                 style: TextStyle(fontSize: 10),
-                controller: _reviewController,
+
+                // controller: _reviewController,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   hintText: "감상평을 남겨보세요",
