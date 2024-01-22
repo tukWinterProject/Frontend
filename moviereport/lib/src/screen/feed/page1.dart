@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:moviereport/src/Widgets/PopularItemsWidget.dart';
 import 'package:moviereport/src/Widgets/StartItemsWidget.dart';
 import 'package:moviereport/src/screen/register/login.dart';
+import 'package:moviereport/src/screen/feed/movie_list_screen.dart';
 
 class Page1 extends StatelessWidget {
-  const Page1({super.key});
+  const Page1({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +25,12 @@ class Page1 extends StatelessWidget {
 
           // 인기있는 영화
           Padding(
-            padding: EdgeInsets.only(top: 20, left: 20),
+            padding: EdgeInsets.only(top: 30, left: 30),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
+              children: [
                 Row(
-                  children: [
+                  children: const [
                     Text(
                       "인기있는 영화",
                       style: TextStyle(
@@ -41,9 +41,19 @@ class Page1 extends StatelessWidget {
                   ],
                 ),
                 SizedBox(width: 10),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: Color(0xffFF3743),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MovieListScreen(),
+                      ),
+                    );
+                  },
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: Color(0xffFF3743),
+                  ),
                 ),
               ],
             ),
