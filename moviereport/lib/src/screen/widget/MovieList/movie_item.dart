@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviereport/src/Dummy/movie_list_screen_dummy.dart';
-import 'package:moviereport/src/screen/feed/reviews.dart';
+import 'package:moviereport/src/screen/feed/reviews_screen.dart';
 
 class MovieItem extends StatelessWidget {
   final MovieListDummy movie; // Movie 객체를 추가합니다.
