@@ -10,7 +10,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
@@ -19,7 +19,7 @@ class _LoginState extends State<Login> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      final String id = _idController.text;
+      final String email = _emailController.text;
       final String password = _passwordController.text;
       // 로그인 로직 추가
       // 로그인 성공 시, 다음 화면으로 이동 혹은 처리
@@ -44,7 +44,7 @@ class _LoginState extends State<Login> {
           children: [
             const SizedBox(height: 10),
             TextFormField(
-              controller: _nameController,
+              controller: _emailController,
               decoration: const InputDecoration(
                 labelText: 'ID',
                 border: OutlineInputBorder(),
@@ -53,7 +53,9 @@ class _LoginState extends State<Login> {
                 if (value == null || value.isEmpty) {
                   return '아이디를 입력하세요.';
                 }
-                // 추가적인 이름 유효성 검사 로직 추가 가능
+                if (!emailRegex.hasMatch(value)) {
+                  return '이메일 형식에 맞지 않습니다.';
+                }
                 return null;
               },
             ),

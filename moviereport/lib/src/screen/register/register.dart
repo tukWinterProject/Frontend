@@ -10,7 +10,7 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
@@ -19,7 +19,7 @@ class _RegisterState extends State<Register> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      final String id = _idController.text;
+      final String email = _emailController.text;
       final String password = _passwordController.text;
       final String name = _nameController.text;
       // 회원가입 로직 추가
@@ -44,7 +44,7 @@ class _RegisterState extends State<Register> {
           padding: const EdgeInsets.all(16.0),
           children: [
             TextFormField(
-              controller: _idController,
+              controller: _nameController,
               decoration: const InputDecoration(
                 labelText: 'NICKNAME',
                 border: OutlineInputBorder(),
@@ -58,16 +58,18 @@ class _RegisterState extends State<Register> {
             ),
             const SizedBox(height: 10),
             TextFormField(
-              controller: _nameController,
+              controller: _emailController,
               decoration: const InputDecoration(
-                labelText: 'ID',
+                labelText: 'EMAIL',
                 border: OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return '아이디를 입력하세요.';
+                  return '이메일을 입력하세요.';
                 }
-                // 추가적인 아이디 유효성 검사 로직 추가 가능
+                if (!emailRegex.hasMatch(value)) {
+                  return '이메일 형식에 맞지 않습니다.';
+                }
                 return null;
               },
             ),
