@@ -36,7 +36,6 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('로그인')),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -79,7 +78,7 @@ class _LoginState extends State<Login> {
             ElevatedButton(
               onPressed: _submitForm,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xffFF7E36),
+                backgroundColor: const Color(0xffFF3743),
               ),
               child: const Text(
                 '로그인',

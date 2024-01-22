@@ -37,7 +37,6 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('회원가입')),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -93,7 +92,7 @@ class _RegisterState extends State<Register> {
             ElevatedButton(
               onPressed: _submitForm,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xffFF7E36),
+                backgroundColor: const Color(0xffFF3743),
               ),
               child: const Text(
                 '회원 가입',
@@ -113,7 +112,7 @@ class _RegisterState extends State<Register> {
                   child: const Text(
                     '로그인',
                     style: TextStyle(
-                      color: Colors.red,
+                      color: Color(0xffFF3743),
                     ),
                   ),
                 ),
