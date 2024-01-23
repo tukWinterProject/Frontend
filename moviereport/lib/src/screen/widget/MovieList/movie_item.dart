@@ -23,7 +23,7 @@ class MovieItem extends StatelessWidget {
               width: 100,
               height: 150,
               child: Image.asset(
-                movie.imageUrl,
+                movie.image_url,
                 fit: BoxFit.cover,
               ),
             ),
@@ -63,7 +63,7 @@ class MovieItem extends StatelessWidget {
                           Container(
                               margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
                               child: Row(children: [
-                                Text(movie.isShowing,
+                                Text(movie.showing == 1 ? "상영중" : "상영종료",
                                     style: TextStyle(
                                       color: const Color.fromRGBO(
                                           255, 55, 67, 20), // 폰트 색상을 빨간색으로 설정
@@ -71,7 +71,10 @@ class MovieItem extends StatelessWidget {
                                     )),
                                 Padding(
                                     padding: EdgeInsets.only(left: 10),
-                                    child: Text(movie.date,
+                                    child: Text(
+                                        movie.showing == 1
+                                            ? "${movie.release_date} ~ "
+                                            : "${movie.release_date} ~ ${movie.end_date}",
                                         style: TextStyle(
                                           color:
                                               Color.fromRGBO(175, 175, 175, 1),
