@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moviereport/src/screen/register/login.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,6 +34,8 @@ class _RegisterState extends State<Register> {
       );
       if (response.statusCode == 200) {
         print("회원가입 성공!!");
+
+        _goToLoginPage();
       } else {
         print("회원가입 실패... ${response.statusCode} ${response.body}");
       }
@@ -44,9 +45,9 @@ class _RegisterState extends State<Register> {
   }
 
   void _goToLoginPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Login()),
+    Navigator.pushReplacement(
+      context, // 현재 페이지의 BuildContext
+      MaterialPageRoute(builder: (context) => Login()), // 새로운 페이지로 이동
     );
   }
 

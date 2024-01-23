@@ -5,7 +5,8 @@ import 'package:moviereport/src/screen/feed/movie_list_screen.dart';
 import 'package:moviereport/src/screen/feed/my_movie_screen.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  final String? token;
+  const Home({Key? key, this.token}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
