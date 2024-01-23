@@ -1,11 +1,49 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileDrawer extends StatelessWidget {
-  final String userProfileImage = 'images/people.png';
-  final String userName = '사용자 닉네임'; // 실제 사용자의 닉네임
-  final String userEmail = 'user@example.com'; // 실제 사용자의 이메일
-
+class ProfileDrawer extends StatefulWidget {
   const ProfileDrawer({Key? key}) : super(key: key);
+
+  @override
+  _ProfileDrawerState createState() => _ProfileDrawerState();
+}
+
+class _ProfileDrawerState extends State<ProfileDrawer> {
+  final String userProfileImage = 'images/people.png';
+  late String name = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedToken = prefs.getString('token');
+
+    print('로컬에 저장된 토큰: $savedToken');
+
+    if (savedToken != null) {
+      try {
+        Map<String, dynamic> decodedToken = _decodeToken(savedToken);
+
+        setState(() {
+          name = decodedToken['name'] ?? 'error';
+        });
+      } catch (error) {
+        print('토큰 디코딩 도중 오류 발생: $error');
+        setState(() {
+          name = 'error';
+        });
+      }
+    } else {
+      setState(() {
+        name = 'GUEST';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +80,8 @@ class ProfileDrawer extends StatelessWidget {
                   height: 40,
                 ),
                 Text(
-                  userName,
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                Text(
-                  userEmail,
-                  style: TextStyle(color: Colors.white, fontSize: 12),
+                  name,
+                  style: TextStyle(color: Colors.white, fontSize: 30),
                 ),
               ],
             ),
@@ -66,5 +100,12 @@ class ProfileDrawer extends StatelessWidget {
     }
 
     return menuItems;
+  }
+
+  Map<String, dynamic> _decodeToken(String token) {
+    final Map<String, dynamic> decodedToken = json.decode(
+      utf8.decode(base64.decode(base64.normalize(token.split(".")[1]))),
+    );
+    return decodedToken;
   }
 }

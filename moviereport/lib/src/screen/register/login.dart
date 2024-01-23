@@ -1,9 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:moviereport/src/screen/feed/page1.dart';
 import 'package:moviereport/src/screen/home.dart';
 import 'package:moviereport/src/screen/register/register.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -32,12 +32,26 @@ class _LoginState extends State<Login> {
       };
 
       final http.Response response = await http.post(
-        Uri.parse('http://localhost:3000/api/user/login'),
+        Uri.parse(apiUrl),
         body: requestData,
       );
 
       if (response.statusCode == 200) {
         print('로그인 성공!!');
+
+        // 토큰 값 저장
+        final Map<String, dynamic> data = json.decode(response.body);
+        final String? token = data['access_token'] as String?;
+
+        if (token != null) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('token', token);
+          print('저장된 토큰: ${prefs.getString('token')}');
+        } else {
+          print('토큰이 없거나 올바르지 않습니다.');
+        }
+
+        _goToHomePage(token);
 
         // 기존에 홈 화면이 스택에 있는지 확인
         bool homeScreenExists = false;
@@ -52,13 +66,22 @@ class _LoginState extends State<Login> {
         if (!homeScreenExists) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Home()),
+            MaterialPageRoute(builder: (context) => Home(token: token)),
           );
         }
       } else {
         print('로그인 실패...');
       }
     }
+  }
+
+  void _goToHomePage(String? token) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Home(token: token),
+      ),
+    );
   }
 
   void _goToRegisterPage() {
