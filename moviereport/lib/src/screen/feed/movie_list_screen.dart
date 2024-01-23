@@ -28,7 +28,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
           await http.get(Uri.parse('http://localhost:3000/api/movie'));
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
-        print('했어 : ${data}');
+
         setState(() {
           moviesList = data.map((movieData) {
             return MovieListDummy(

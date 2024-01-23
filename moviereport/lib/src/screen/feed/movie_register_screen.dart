@@ -33,7 +33,7 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
   String endDate = '';
   bool showing = true;
   String genre = '';
-  String imageUrl = '';
+  String image_url = '';
 
   void selectShowing(bool selectedShowing) {
     setState(() {
@@ -55,90 +55,95 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
 
     if (pickedFile != null) {
       setState(() {
-        imageUrl = pickedFile.path; // 파일의 경로(URL) 저장
+        image_url = pickedFile.path; // 파일의 경로(URL) 저장
       });
     }
   }
 
   Future<void> submitForm() async {
-    final token = await storage.read(key: 'access_token');
+    try {
+      final token = await storage.read(key: 'access_token');
 
-    var response = await http.post(
-      Uri.parse('YOUR_API_ENDPOINT'), // Replace with your API endpoint
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token', // Add token to the request header
-      },
-      body: jsonEncode(<String, dynamic>{
-        'title': title,
-        'release_date': releaseDate,
-        'end_date': endDate,
-        'showing': showing,
-        'genre': genre,
-        'image_url': imageUrl,
-      }),
-    );
+      var response = await http.post(
+        Uri.parse(
+            'http://localhost:3000/api/register'), // Replace with your API endpoint
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token', // Add token to the request header
+        },
+        body: jsonEncode(<String, dynamic>{
+          'title': title,
+          'release_date': releaseDate,
+          'end_date': endDate,
+          'showing': showing,
+          'genre': genre,
+          'image_url': image_url,
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      // ignore: use_build_context_synchronously
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("성공"),
-            content: Text("영화등록에 성공하였습니다"),
-            actions: <Widget>[
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(255, 55, 67, 1),
+      if (response.statusCode == 200) {
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("성공"),
+              content: Text("영화등록에 성공하였습니다"),
+              actions: <Widget>[
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromRGBO(255, 55, 67, 1),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MovieListScreen()));
+                    // Navigate to second page
+                  },
+                  child: Text(
+                    "Ok",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MovieListScreen()));
-                  // Navigate to second page
-                },
-                child: Text(
-                  "Ok",
-                  style: TextStyle(color: Colors.white),
+              ],
+            );
+          },
+        );
+        // Handle the response
+        print('Success: ${response.body}');
+      } else {
+        print('Error: ${response.statusCode}');
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("실패"),
+              content: Text("영화등록에 실패하였습니다"),
+              actions: <Widget>[
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromRGBO(255, 55, 67, 1),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // Navigate to second page
+                  },
+                  child: Text(
+                    "Ok",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
-      );
-      // Handle the response
-      print('Success: ${response.body}');
-    } else {
-      print('Error: ${response.statusCode}');
-      // ignore: use_build_context_synchronously
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("실패"),
-            content: Text("영화등록에 실패하였습니다"),
-            actions: <Widget>[
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(255, 55, 67, 1),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  // Navigate to second page
-                },
-                child: Text(
-                  "Ok",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          );
-        },
-      );
-      // Handle the error
+              ],
+            );
+          },
+        );
+        // Handle the error
+      }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -319,8 +324,8 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
                       )),
                 ),
                 SizedBox(height: 20),
-                imageUrl.isNotEmpty
-                    ? Image.file(File(imageUrl))
+                image_url.isNotEmpty
+                    ? Image.file(File(image_url))
                     : Text("No image selected"),
                 Padding(
                   padding: EdgeInsets.fromLTRB(0, 70, 0, 40),
