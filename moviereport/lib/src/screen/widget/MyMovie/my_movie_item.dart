@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviereport/src/Dummy/my_movie_screen_dummy.dart';
+import 'package:moviereport/src/screen/feed/movie_modify_screen.dart';
 import 'package:moviereport/src/screen/feed/reviews_screen.dart';
 
 class MyMovieItem extends StatelessWidget {
@@ -96,7 +97,13 @@ class MyMovieItem extends StatelessWidget {
                                       backgroundColor:
                                           Color.fromARGB(255, 236, 19, 19),
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const MovieModifyScreen()));
+                                    },
                                     child: Text("수정",
                                         style: TextStyle(
                                           color: Color.fromARGB(
