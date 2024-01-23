@@ -1,7 +1,7 @@
 class MovieListDummy {
   final int id;
   final int user_id;
-  final int showing;
+  final bool showing;
   final String title;
   final String genre;
   final String release_date;
