@@ -96,7 +96,8 @@ class MovieItem extends StatelessWidget {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const Reviews()));
+                                        builder: (context) =>
+                                            Reviews(movieId: movie.id)));
                               },
                               child: Text(" 리뷰 보기",
                                   style: TextStyle(
