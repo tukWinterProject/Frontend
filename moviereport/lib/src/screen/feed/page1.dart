@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviereport/src/Widgets/PopularItemsWidget.dart';
 import 'package:moviereport/src/Widgets/StartItemsWidget.dart';
-import 'package:moviereport/src/screen/register/login.dart';
 import 'package:moviereport/src/screen/feed/movie_list_screen.dart';
 
 class Page1 extends StatelessWidget {

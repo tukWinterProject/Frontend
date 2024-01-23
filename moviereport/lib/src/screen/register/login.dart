@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviereport/src/screen/feed/page1.dart';
+import 'package:moviereport/src/screen/home.dart';
 import 'package:moviereport/src/screen/register/register.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,6 +37,22 @@ class _LoginState extends State<Login> {
 
       if (response.statusCode == 200) {
         print('로그인 성공!!');
+        // 기존에 홈 화면이 스택에 있는지 확인
+        bool homeScreenExists = false;
+        Navigator.popUntil(context, (route) {
+          if (route.settings.name == '/') {
+            homeScreenExists = true;
+          }
+          return true;
+        });
+
+        // 기존에 홈 화면이 스택에 없으면 새로운 홈 화면 추가
+        if (!homeScreenExists) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Home()),
+          );
+        }
       } else {
         print('로그인 실패...');
       }

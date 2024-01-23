@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:moviereport/src/screen/feed/movie_list_screen.dart';
+import 'package:moviereport/src/screen/feed/page1.dart';
 import 'package:moviereport/src/screen/home.dart';
-import 'package:http/http.dart' as http;
 
 void main() {
-  //안에서 구동
   runApp(MyApp());
 }
 
@@ -18,6 +18,8 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         "/": (context) => Home(),
+        "/movielist": (context) => MovieListScreen(),
+        "/page1": (context) => Page1(),
       },
     );
   }
