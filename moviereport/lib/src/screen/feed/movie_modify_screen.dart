@@ -1,20 +1,20 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
-import 'package:moviereport/src/screen/feed/movie_list_screen.dart';
-import 'dart:convert';
-import 'package:moviereport/src/screen/widget/MovieRegister/label.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:moviereport/src/screen/feed/movie_list_screen.dart';
+import 'package:moviereport/src/screen/widget/MovieRegister/label.dart';
 
-class MovieRegisterScreen extends StatefulWidget {
-  const MovieRegisterScreen({super.key});
+class MovieModifyScreen extends StatefulWidget {
+  const MovieModifyScreen({super.key});
 
   @override
-  State<MovieRegisterScreen> createState() => _MovieRegisterScreenState();
+  State<MovieModifyScreen> createState() => _MovieModifyState();
 }
 
-class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
+class _MovieModifyState extends State<MovieModifyScreen> {
   final _formKey = GlobalKey<FormState>();
   final storage = FlutterSecureStorage();
 
@@ -28,12 +28,45 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
   ];
 
   // Form fields
+  late int id;
   String title = '';
   String releaseDate = '';
   String endDate = '';
   bool showing = true;
   String genre = '';
   String imageUrl = '';
+
+  @override
+  void initState() {
+    super.initState();
+    loadMovieData(); // 초기 데이터 로드
+  }
+
+  Future<void> loadMovieData() async {
+    try {
+      // 서버로부터 데이터를 불러오는 GET 요청
+      var response = await http.get(
+          Uri.parse('http://localhost:3000/api/movie/${'movie_id'}/update'));
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        // 받아온 데이터로 상태 업데이트
+        setState(() {
+          title = data['title'];
+          releaseDate = data['release_date'];
+          endDate = data['end_date'];
+          showing = data['showing'];
+          genre = data['genre'];
+          imageUrl = data['image_url'];
+        });
+      } else {
+        // 오류 처리
+        print('Failed to load movie data');
+      }
+    } catch (e) {
+      // 예외 처리
+      print('Error: $e');
+    }
+  }
 
   void selectShowing(bool selectedShowing) {
     setState(() {
@@ -60,10 +93,11 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
     }
   }
 
-  Future<void> submitForm() async {
+  void updateMovie() async {
+    // 폼 데이터를 서버에 PUT 요청으로 전송
     final token = await storage.read(key: 'access_token');
 
-    var response = await http.post(
+    var response = await http.put(
       Uri.parse('YOUR_API_ENDPOINT'), // Replace with your API endpoint
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -78,7 +112,6 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
         'image_url': imageUrl,
       }),
     );
-
     if (response.statusCode == 200) {
       // ignore: use_build_context_synchronously
       showDialog(
@@ -332,7 +365,7 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        submitForm();
+                        updateMovie();
                       }
                     },
                     child: Text(
