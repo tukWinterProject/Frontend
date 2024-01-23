@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviereport/src/screen/register/login.dart';
+import 'package:http/http.dart' as http;
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -17,20 +18,36 @@ class _RegisterState extends State<Register> {
   final RegExp emailRegex =
       RegExp(r'^[a-zA-Z0-9_+.-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final String email = _emailController.text;
       final String password = _passwordController.text;
       final String name = _nameController.text;
+
+      final response = await http.post(
+        Uri.parse("http://localhost:3000/api/user/register"),
+        body: {
+          'email': email,
+          'password': password,
+          'name': name,
+        },
+      );
+      if (response.statusCode == 200) {
+        print("회원가입 성공!!");
+
+        _goToLoginPage();
+      } else {
+        print("회원가입 실패... ${response.statusCode} ${response.body}");
+      }
       // 회원가입 로직 추가
       // 회원가입 성공 시, 다음 화면으로 이동 혹은 처리
     }
   }
 
   void _goToLoginPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Login()),
+    Navigator.pushReplacement(
+      context, // 현재 페이지의 BuildContext
+      MaterialPageRoute(builder: (context) => Login()), // 새로운 페이지로 이동
     );
   }
 

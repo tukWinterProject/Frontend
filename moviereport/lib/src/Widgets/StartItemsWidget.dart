@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviereport/src/Auth/AuthManager.dart';
 import 'package:moviereport/src/screen/register/login.dart';
 
 class StartItemsWidget extends StatelessWidget {
@@ -72,10 +73,15 @@ class StartItemsWidget extends StatelessWidget {
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Login()),
-                      );
+                      if (!authManager.isLoggedIn) {
+                        // 로그인이 안된 상태면 로그인 화면으로 이동
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Login()),
+                        );
+                      } else {
+                        // 로그인이 된 상태면 아무런 반응 없음
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xffFF3743),
