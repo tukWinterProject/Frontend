@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:moviereport/src/screen/widget/MovieRegister/label.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:http_parser/http_parser.dart';
 
 class MovieRegisterScreen extends StatefulWidget {
   const MovieRegisterScreen({super.key});
@@ -64,22 +65,27 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
     try {
       final token = await storage.read(key: 'access_token');
 
-      var response = await http.post(
-        Uri.parse(
-            'http://localhost:3000/api/register'), // Replace with your API endpoint
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $token', // Add token to the request header
-        },
-        body: jsonEncode(<String, dynamic>{
-          'title': title,
-          'release_date': releaseDate,
-          'end_date': endDate,
-          'showing': showing,
-          'genre': genre,
-          'image_url': image_url,
-        }),
-      );
+      var uri = Uri.parse('http://localhost:3000/api/register');
+
+      var request = http.MultipartRequest('POST', uri)
+        ..headers['Authorization'] = 'Bearer $token'
+        ..headers['Content-Type'] = 'multipart/form-data'
+        ..fields['title'] = title
+        ..fields['release_date'] = releaseDate
+        ..fields['end_date'] = endDate
+        ..fields['showing'] = showing.toString()
+        ..fields['genre'] = genre;
+
+      if (image_url.isNotEmpty) {
+        var imageFile = await http.MultipartFile.fromPath(
+          'image', // 서버에서 기대하는 필드명
+          image_url,
+          contentType: MediaType('image', 'jpeg'), // 이미지 형식에 따라 변경 가능
+        );
+        request.files.add(imageFile);
+      }
+
+      var response = await request.send();
 
       if (response.statusCode == 200) {
         // ignore: use_build_context_synchronously
@@ -112,7 +118,7 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
           },
         );
         // Handle the response
-        print('Success: ${response.body}');
+        print('Success: Image Uploaded');
       } else {
         print('Error: ${response.statusCode}');
         // ignore: use_build_context_synchronously

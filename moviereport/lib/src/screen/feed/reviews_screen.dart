@@ -33,7 +33,9 @@ class Reviews extends StatelessWidget {
             Movie(
               movie_id: movieId,
             ),
-            ReviewForm(),
+            ReviewForm(
+              movie_id: movieId,
+            ),
           ],
         ),
       ),
