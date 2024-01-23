@@ -4,7 +4,8 @@ import 'package:moviereport/src/screen/widget/Review/movie.dart';
 import 'package:moviereport/src/screen/widget/Review/review_form.dart';
 
 class Reviews extends StatelessWidget {
-  const Reviews({super.key});
+  final int movieId;
+  const Reviews({super.key, required this.movieId});
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +31,11 @@ class Reviews extends StatelessWidget {
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
             ),
             Movie(
-              movie: dummyMovie,
+              movie_id: movieId,
             ),
-            ReviewForm(),
+            ReviewForm(
+              movie_id: movieId,
+            ),
           ],
         ),
       ),

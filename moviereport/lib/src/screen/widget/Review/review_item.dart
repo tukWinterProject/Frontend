@@ -31,7 +31,7 @@ class ReviewItem extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(9, 10, 0, 0),
             width: double.infinity,
             child: Text(
-              reviews.contents,
+              reviews.content,
               style: TextStyle(fontSize: 12),
               // controller: _reviewController,
             ),
@@ -40,7 +40,7 @@ class ReviewItem extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
             width: 90,
             child: Text(
-              reviews.date,
+              reviews.created_at,
               style: TextStyle(
                   fontSize: 10, color: Color.fromRGBO(175, 175, 175, 1)),
               // controller: _reviewController,
