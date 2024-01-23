@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moviereport/src/screen/feed/page1.dart';
 import 'package:moviereport/src/screen/home.dart';
 import 'package:moviereport/src/screen/register/register.dart';
@@ -37,6 +38,7 @@ class _LoginState extends State<Login> {
 
       if (response.statusCode == 200) {
         print('로그인 성공!!');
+
         // 기존에 홈 화면이 스택에 있는지 확인
         bool homeScreenExists = false;
         Navigator.popUntil(context, (route) {
@@ -85,12 +87,12 @@ class _LoginState extends State<Login> {
         key: _formKey,
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(50.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: 80),
+                SizedBox(height: 50),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(

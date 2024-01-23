@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ProfileDrawer extends StatelessWidget {
   final String userProfileImage = 'images/people.png';
-  final String userNickname = '사용자 닉네임'; // 실제 사용자의 닉네임
+  final String userName = '사용자 닉네임'; // 실제 사용자의 닉네임
   final String userEmail = 'user@example.com'; // 실제 사용자의 이메일
 
   const ProfileDrawer({Key? key}) : super(key: key);
@@ -42,7 +42,7 @@ class ProfileDrawer extends StatelessWidget {
                   height: 40,
                 ),
                 Text(
-                  userNickname,
+                  userName,
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 Text(
