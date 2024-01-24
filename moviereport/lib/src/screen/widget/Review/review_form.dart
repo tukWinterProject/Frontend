@@ -26,7 +26,8 @@ class _ReviewFormState extends State<ReviewForm> {
   @override
   void initState() {
     super.initState();
-    fetchMovies(); // 초기 데이터 로드
+    fetchReviews();
+    print("초기 리뷰 로드"); // 초기 데이터 로드
   }
 
   Future<void> submitForm() async {
@@ -63,6 +64,8 @@ class _ReviewFormState extends State<ReviewForm> {
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
+                    fetchReviews();
+
                     // Navigate to second page
                   },
                   child: Text(
@@ -110,9 +113,8 @@ class _ReviewFormState extends State<ReviewForm> {
     }
   }
 
-  Future<void> fetchMovies() async {
+  Future<void> fetchReviews() async {
     try {
-      print('여긴왜');
       // 서버로부터 데이터를 불러오는 GET 요청
       var response = await http.get(
           Uri.parse('http://localhost:3000/api/review/${widget.movie_id}'));
@@ -149,14 +151,14 @@ class _ReviewFormState extends State<ReviewForm> {
             borderRadius: BorderRadius.circular(10.0),
           ),
           child: Column(children: [
-            Container(
-              padding: EdgeInsets.fromLTRB(8, 5, 0, 0),
-              width: double.infinity,
-              child: Text(
-                "부리부",
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14),
-              ),
-            ),
+            // Container(
+            //   padding: EdgeInsets.fromLTRB(8, 5, 0, 0),
+            //   width: double.infinity,
+            //   child: Text(
+            //     "부리부",
+            //     style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14),
+            //   ),
+            // ),
             Padding(
               padding: EdgeInsets.only(left: 2),
               child: TextFormField(
@@ -179,7 +181,6 @@ class _ReviewFormState extends State<ReviewForm> {
               ),
               onPressed: () {
                 submitForm();
-                fetchMovies();
                 print(content);
               },
               child: Text("등록하기",

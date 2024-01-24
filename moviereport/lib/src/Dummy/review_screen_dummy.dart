@@ -1,18 +1,26 @@
-// class MovieDummy {
-//   final String imageUrl;
-//   final String title;
-//   final String genre;
-//   final String isShowing;
-//   final String date;
+class MovieDummy {
+  final int? id;
+  final int? user_id;
+  final String? title;
+  final int? showing;
+  final String? genre;
+  final String? release_date;
+  final String? end_date;
+  // final String registration_date;
+  final String? image_url;
 
-//   MovieDummy({
-//     required this.imageUrl,
-//     required this.title,
-//     required this.genre,
-//     required this.isShowing,
-//     required this.date,
-//   });
-// }
+  MovieDummy({
+    required this.id,
+    required this.user_id,
+    required this.title,
+    required this.showing,
+    required this.genre,
+    required this.release_date,
+    required this.end_date,
+    // required this.registration_date,
+    required this.image_url,
+  });
+}
 
 class ReviewsDummy {
   final String name;
@@ -25,14 +33,6 @@ class ReviewsDummy {
     required this.created_at,
   });
 }
-
-// MovieDummy dummyMovie = MovieDummy(
-//   imageUrl: 'assets/example.png',
-//   title: '범죄도시',
-//   genre: '액션',
-//   isShowing: "상영중",
-//   date: '2020.10.20~',
-// );
 
 List<ReviewsDummy> dummyReviws = [
   ReviewsDummy(
