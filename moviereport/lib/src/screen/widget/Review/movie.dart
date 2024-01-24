@@ -13,8 +13,14 @@ class Movie extends StatefulWidget {
 }
 
 class _MovieState extends State<Movie> {
-  MovieDummy? movieData;
-
+  late int id;
+  late int user_id;
+  late int showing;
+  late String title;
+  late String release_date;
+  late String genre;
+  late String end_date;
+  late String image_url;
   @override
   void initState() {
     super.initState();
@@ -29,20 +35,18 @@ class _MovieState extends State<Movie> {
           .get(Uri.parse('http://localhost:3000/api/movie/${widget.movie_id}'));
       if (response.statusCode == 200) {
         print('무비 가져오기 성공');
-        Map<String, dynamic> data = json.decode(response.body);
+        Map<String, dynamic> movieData = json.decode(response.body);
+        print("dlr${movieData['id']}");
         setState(() {
-          movieData = MovieDummy(
-            id: data['id'],
-            user_id: data['user_id'],
-            showing: data['showing'], // showing을 bool로 변환
-            title: data['title'],
-            release_date: data['release_date'],
-            genre: data['genre'],
-            end_date: data['end_date'],
-            image_url: data['image_url'],
-          );
+          id = movieData['id'];
+          user_id = movieData['user_id'];
+          showing = movieData['showing'];
+          title = movieData['title'];
+          release_date = movieData['release_date'];
+          genre = movieData['genre'];
+          end_date = movieData['end_date'];
+          image_url = movieData['image_url'];
         });
-        print(movieData?.id);
       } else {
         print('Failed to load movie data');
       }
@@ -73,26 +77,23 @@ class _MovieState extends State<Movie> {
             Column(
               children: [
                 Container(
-                  margin: EdgeInsets.only(right: 23),
-                  child: Text("movieData.title",
+                  padding: EdgeInsets.only(right: 45),
+                  child: Text(title,
                       style: TextStyle(
-                          fontSize: 20.0, fontWeight: FontWeight.bold)),
+                          fontSize: 25.0, fontWeight: FontWeight.bold)),
                 ),
                 Row(
                   children: [
                     Padding(
                         padding: EdgeInsets.fromLTRB(30, 10, 10, 0),
-                        child: Text(movieData?.showing == 1 ? "상영중" : "상영종료",
+                        child: Text(showing == 1 ? "상영중" : "상영종료",
                             style: TextStyle(
                               color: const Color.fromRGBO(255, 55, 67, 20),
                               fontSize: 15.0,
                             ))),
                     Padding(
                       padding: EdgeInsets.only(top: 10),
-                      child: Text(
-                          movieData?.showing != 1
-                              ? "movieData?.release_date"
-                              : "movieData?.release_date ~ movieData?.end_date",
+                      child: Text(showing != 1 ? release_date : end_date,
                           style: TextStyle(
                             color: Color.fromRGBO(175, 175, 175, 1),
                             fontSize: 12.0,
@@ -103,8 +104,8 @@ class _MovieState extends State<Movie> {
               ],
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(20, 90, 0, 0),
-              child: Text("movieData?.genre",
+              padding: EdgeInsets.fromLTRB(15, 90, 0, 0),
+              child: Text(genre,
                   style: TextStyle(
                     color: Color.fromRGBO(175, 175, 175, 1),
                     fontSize: 13.0,
@@ -115,8 +116,8 @@ class _MovieState extends State<Movie> {
                 margin: EdgeInsets.fromLTRB(5, 10, 10, 10),
                 width: 100,
                 height: 150,
-                child: Image.asset(
-                  "movieData.image_url",
+                child: Image.network(
+                  image_url,
                   fit: BoxFit.cover,
                 ),
               ),

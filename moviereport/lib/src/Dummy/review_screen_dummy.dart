@@ -7,7 +7,7 @@ class MovieDummy {
   final String? release_date;
   final String? end_date;
   // final String registration_date;
-  final String? image_url;
+  final String image_url;
 
   MovieDummy({
     required this.id,

@@ -22,7 +22,7 @@ class MovieItem extends StatelessWidget {
             child: Container(
               width: 100,
               height: 150,
-              child: Image.asset(
+              child: Image.network(
                 movie.image_url,
                 fit: BoxFit.cover,
               ),

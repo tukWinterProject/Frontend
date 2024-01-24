@@ -1,14 +1,16 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:moviereport/src/screen/feed/movie_list_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:moviereport/src/screen/widget/MovieRegister/label.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:http_parser/http_parser.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MovieModifyScreen extends StatefulWidget {
-  const MovieModifyScreen({super.key});
+  final int movie_id;
+  const MovieModifyScreen({super.key, required this.movie_id});
 
   @override
   State<MovieModifyScreen> createState() => _MovieModifyState();
@@ -27,48 +29,45 @@ class _MovieModifyState extends State<MovieModifyScreen> {
     'Horror'
   ];
 
-  // Form fields
-  late int id;
-  String title = '';
-  String releaseDate = '';
-  String endDate = '';
-  bool showing = true;
-  String genre = '';
-  String imageUrl = '';
-
+  late int showing;
+  late String title;
+  late String release_date;
+  late String genre;
+  late String end_date;
+  late String image_url;
   @override
   void initState() {
     super.initState();
-    loadMovieData(); // 초기 데이터 로드
+    fetchMovies();
+    print("초기 영화 로드"); // 초기 데이터 로드
   }
 
-  Future<void> loadMovieData() async {
+  Future<void> fetchMovies() async {
     try {
       // 서버로부터 데이터를 불러오는 GET 요청
-      var response = await http.get(
-          Uri.parse('http://localhost:3000/api/movie/${'movie_id'}/update'));
+      var response = await http
+          .get(Uri.parse('http://localhost:3000/api/movie/${widget.movie_id}'));
       if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        // 받아온 데이터로 상태 업데이트
+        print('무비 가져오기 성공');
+        Map<String, dynamic> movieData = json.decode(response.body);
+        print("dlr${movieData['id']}");
         setState(() {
-          title = data['title'];
-          releaseDate = data['release_date'];
-          endDate = data['end_date'];
-          showing = data['showing'];
-          genre = data['genre'];
-          imageUrl = data['image_url'];
+          showing = movieData['showing'];
+          title = movieData['title'];
+          release_date = movieData['release_date'];
+          genre = movieData['genre'];
+          end_date = movieData['end_date'];
+          image_url = movieData['image_url'];
         });
       } else {
-        // 오류 처리
         print('Failed to load movie data');
       }
     } catch (e) {
-      // 예외 처리
       print('Error: $e');
     }
   }
 
-  void selectShowing(bool selectedShowing) {
+  void selectShowing(int selectedShowing) {
     setState(() {
       showing = selectedShowing;
     });
@@ -76,102 +75,155 @@ class _MovieModifyState extends State<MovieModifyScreen> {
 
   void selectGenre(String selectedGenre) {
     setState(() {
-      this.genre = selectedGenre; // 선택된 장르로 상태 업데이트
       genre = selectedGenre;
     });
-    // print('ㅉㅏㅇ르  ${genre}');
   }
 
-  void pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+  Widget buildImage() {
+    // image_url이 네트워크 URL인지 확인
+    bool isNetworkUrl =
+        image_url.startsWith('http') || image_url.startsWith('https');
 
-    if (pickedFile != null) {
-      setState(() {
-        imageUrl = pickedFile.path; // 파일의 경로(URL) 저장
-      });
+    if (isNetworkUrl) {
+      // 네트워크 URL인 경우 Image.network를 사용
+      return Image.network(
+        image_url,
+        fit: BoxFit.cover,
+      );
+    } else if (image_url.isNotEmpty) {
+      // 로컬 파일 경로인 경우 Image.file을 사용
+      return Image.file(
+        File(image_url),
+        fit: BoxFit.cover,
+      );
+    } else {
+      // 이미지가 설정되지 않은 경우 텍스트 표시
+      return Text("No image selected");
     }
   }
 
-  void updateMovie() async {
-    // 폼 데이터를 서버에 PUT 요청으로 전송
-    final token = await storage.read(key: 'access_token');
+  void pickImage() async {
+    try {
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
 
-    var response = await http.put(
-      Uri.parse('YOUR_API_ENDPOINT'), // Replace with your API endpoint
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token', // Add token to the request header
-      },
-      body: jsonEncode(<String, dynamic>{
-        'title': title,
-        'release_date': releaseDate,
-        'end_date': endDate,
-        'showing': showing,
-        'genre': genre,
-        'image_url': imageUrl,
-      }),
+      if (pickedFile != null) {
+        setState(() {
+          image_url = pickedFile.path;
+        });
+      }
+    } catch (e) {
+      print('파일 선택 중 오류 발생: $e');
+    }
+  }
+
+  Future<String> uploadImage(String imagePath) async {
+    var uri = Uri.parse('http://localhost:3000/api/file/upload');
+    var request = http.MultipartRequest('POST', uri);
+
+    var imageFile = await http.MultipartFile.fromPath(
+      'image',
+      imagePath,
+      contentType: MediaType('image', 'jpeg'),
     );
+
+    request.files.add(imageFile);
+
+    var response = await request.send();
+
     if (response.statusCode == 200) {
-      // ignore: use_build_context_synchronously
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("성공"),
-            content: Text("영화등록에 성공하였습니다"),
-            actions: <Widget>[
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(255, 55, 67, 1),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MovieListScreen()));
-                  // Navigate to second page
-                },
-                child: Text(
-                  "Ok",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          );
-        },
-      );
-      // Handle the response
-      print('Success: ${response.body}');
+      var responseData = await response.stream.toBytes();
+      var responseString = String.fromCharCodes(responseData);
+      print("Response: $responseString");
+      return responseString;
     } else {
-      print('Error: ${response.statusCode}');
-      // ignore: use_build_context_synchronously
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("실패"),
-            content: Text("영화등록에 실패하였습니다"),
-            actions: <Widget>[
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(255, 55, 67, 1),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  // Navigate to second page
-                },
-                child: Text(
-                  "Ok",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
+      throw Exception('이미지 업로드 실패');
+    }
+  }
+
+  Future<void> submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      try {
+        String imageUrl = '';
+        if (image_url.isNotEmpty) {
+          imageUrl = await uploadImage(image_url);
+        }
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? token = prefs.getString('token');
+
+        var response = await http.put(
+          Uri.parse(
+              'http://localhost:3000/api/movie/${widget.movie_id}/update'),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${token}',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'title': title,
+            'release_date': release_date,
+            'end_date': end_date,
+            'showing': showing,
+            'genre': genre,
+            'image_url': imageUrl,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("성공"),
+                content: Text("영화수정에 성공하였습니다"),
+                actions: <Widget>[
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromRGBO(255, 55, 67, 1),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "Ok",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              );
+            },
           );
-        },
-      );
-      // Handle the error
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("실패"),
+                content: Text("영화수정에 실패하였습니다"),
+                actions: <Widget>[
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromRGBO(255, 55, 67, 1),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "Ok",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } catch (e) {
+        print('Error: $e');
+      }
     }
   }
 
@@ -199,11 +251,12 @@ class _MovieModifyState extends State<MovieModifyScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               // 세로 정렬 방향 설정
               children: [
-                Text("영화 등록",
+                Text("영화 수정",
                     style:
                         TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
                 Label(title: "영화 제목"),
                 TextFormField(
+                  initialValue: title,
                   style: TextStyle(fontSize: 10, decorationThickness: 0),
                   onSaved: (value) => title = value ?? '',
                   decoration: InputDecoration(
@@ -257,8 +310,9 @@ class _MovieModifyState extends State<MovieModifyScreen> {
                 ),
                 Label(title: "시작 상영일"),
                 TextFormField(
+                  initialValue: release_date,
                   style: TextStyle(fontSize: 10, decorationThickness: 0),
-                  onSaved: (value) => releaseDate = value ?? '',
+                  onSaved: (value) => release_date = value ?? '',
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -279,8 +333,9 @@ class _MovieModifyState extends State<MovieModifyScreen> {
                 ),
                 Label(title: "상영 종료일"),
                 TextFormField(
+                  initialValue: end_date,
                   style: TextStyle(fontSize: 10, decorationThickness: 0),
-                  onSaved: (value) => endDate = value ?? '',
+                  onSaved: (value) => end_date = value ?? '',
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -307,15 +362,15 @@ class _MovieModifyState extends State<MovieModifyScreen> {
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: showing
+                        primary: showing == 1
                             ? Color.fromRGBO(255, 55, 67, 1)
                             : Color.fromARGB(255, 255, 255, 255),
                       ),
-                      onPressed: () => selectShowing(true),
+                      onPressed: () => selectShowing(1),
                       child: Text(
                         "상영중",
                         style: TextStyle(
-                          color: showing
+                          color: showing == 1
                               ? Colors.white
                               : Color.fromRGBO(255, 55, 67, 1),
                         ),
@@ -323,15 +378,15 @@ class _MovieModifyState extends State<MovieModifyScreen> {
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: !showing
+                        primary: showing == 0
                             ? Color.fromRGBO(255, 55, 67, 1)
                             : Color.fromARGB(255, 255, 255, 255),
                       ),
-                      onPressed: () => selectShowing(false),
+                      onPressed: () => selectShowing(0),
                       child: Text(
                         "상영 종료",
                         style: TextStyle(
-                          color: !showing
+                          color: showing == 0
                               ? Colors.white
                               : Color.fromRGBO(255, 55, 67, 1),
                         ),
@@ -352,9 +407,7 @@ class _MovieModifyState extends State<MovieModifyScreen> {
                       )),
                 ),
                 SizedBox(height: 20),
-                imageUrl.isNotEmpty
-                    ? Image.file(File(imageUrl))
-                    : Text("No image selected"),
+                buildImage(),
                 Padding(
                   padding: EdgeInsets.fromLTRB(0, 70, 0, 40),
                   child: ElevatedButton(
@@ -363,10 +416,7 @@ class _MovieModifyState extends State<MovieModifyScreen> {
                       backgroundColor: Color.fromRGBO(255, 55, 67, 1),
                     ),
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        updateMovie();
-                      }
+                      submitForm();
                     },
                     child: Text(
                       "등록하기",

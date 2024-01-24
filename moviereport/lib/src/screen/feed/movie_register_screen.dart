@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:moviereport/src/screen/feed/movie_list_screen.dart';
 import 'dart:convert';
 import 'package:moviereport/src/screen/widget/MovieRegister/label.dart';
 import 'package:image_picker/image_picker.dart';
@@ -45,7 +44,6 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
 
   void selectGenre(String selectedGenre) {
     setState(() {
-      // 선택된 장르로 상태 업데이트
       genre = selectedGenre;
     });
   }
@@ -65,38 +63,60 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
     }
   }
 
+  Future<String> uploadImage(String imagePath) async {
+    var uri = Uri.parse('http://localhost:3000/api/file/upload');
+    var request = http.MultipartRequest('POST', uri);
+
+    var imageFile = await http.MultipartFile.fromPath(
+      'image',
+      imagePath,
+      contentType: MediaType('image', 'jpeg'),
+    );
+
+    request.files.add(imageFile);
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      var responseData = await response.stream.toBytes();
+      var responseString = String.fromCharCodes(responseData);
+      print("Response: $responseString");
+      return responseString;
+    } else {
+      throw Exception('이미지 업로드 실패');
+    }
+  }
+
   Future<void> submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+
       try {
+        String imageUrl = '';
+        if (image_url.isNotEmpty) {
+          imageUrl = await uploadImage(image_url);
+        }
+
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? token = prefs.getString('token');
 
-        var uri = Uri.parse('http://localhost:3000/api/movie/register');
-
-        var request = http.MultipartRequest('POST', uri)
-          ..headers['Authorization'] = 'Bearer ${token}'
-          ..headers['Content-Type'] = 'multipart/form-data'
-          ..fields['title'] = title
-          ..fields['release_date'] = releaseDate
-          ..fields['end_date'] = endDate
-          ..fields['showing'] = showing.toString()
-          ..fields['genre'] = genre;
-
-        if (image_url.isNotEmpty) {
-          var imageFile = await http.MultipartFile.fromPath(
-            'image_url', // 서버에서 기대하는 필드명
-            image_url,
-            contentType: MediaType('image', 'jpeg'), // 이미지 형식에 따라 변경 가능
-          );
-          request.files.add(imageFile);
-        }
-
-        var response = await request.send();
+        var response = await http.post(
+          Uri.parse('http://localhost:3000/api/movie/register'),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'title': title,
+            'release_date': releaseDate,
+            'end_date': endDate,
+            'showing': showing,
+            'genre': genre,
+            'image_url': imageUrl,
+          }),
+        );
 
         if (response.statusCode == 200) {
-          print("영화등록에 성공하");
-          // ignore: use_build_context_synchronously
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -111,7 +131,6 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
                     onPressed: () {
                       Navigator.of(context).pop();
                       Navigator.of(context).pop();
-                      // Navigate to second page
                     },
                     child: Text(
                       "Ok",
@@ -122,11 +141,7 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
               );
             },
           );
-          // Handle the response
-          print('Success: Image Uploaded');
         } else {
-          print('Error: ${response}');
-          // ignore: use_build_context_synchronously
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -140,7 +155,6 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
                     ),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      // Navigate to second page
                     },
                     child: Text(
                       "Ok",
@@ -151,7 +165,6 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
               );
             },
           );
-          // Handle the error
         }
       } catch (e) {
         print('Error: $e');

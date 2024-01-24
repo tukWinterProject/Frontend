@@ -20,7 +20,8 @@ class _MyMovieScreen extends State<MyMovieScreen> {
   @override
   void initState() {
     super.initState();
-    fetchMovies(); // 초기 데이터 로드
+    fetchMovies();
+    print("영화 리스트 불러오기 성ㄴ"); // 초기 데이터 로드
   }
 
   Future<void> fetchMovies() async {
@@ -44,7 +45,7 @@ class _MyMovieScreen extends State<MyMovieScreen> {
           moviesList = data.map((movieData) {
             return MovieListDummy(
               id: movieData['id'],
-              user_id: movieData[' user_id'],
+              user_id: movieData['user_id'],
               showing: movieData['showing'],
               title: movieData['title'],
               release_date: movieData['release_date'],
