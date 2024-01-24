@@ -21,7 +21,8 @@ class _MovieListScreenState extends State<MovieListScreen> {
   @override
   void initState() {
     super.initState();
-    fetchMovies(); // 초기 데이터 로드
+    fetchMovies();
+    print("영화 리스트 불러오기 성ㄴ"); // 초기 데이터 로드
   }
 
   Future<void> fetchMovies() async {
@@ -30,14 +31,13 @@ class _MovieListScreenState extends State<MovieListScreen> {
       var response =
           await http.get(Uri.parse('http://localhost:3000/api/movie'));
       if (response.statusCode == 200) {
-        print("영화 리스트 불러오기 성ㄴ");
         List<dynamic> data = json.decode(response.body);
-        print(data);
+
         setState(() {
           moviesList = data.map((movieData) {
             return MovieListDummy(
               id: movieData['id'],
-              user_id: movieData[' user_id'],
+              user_id: movieData['user_id'],
               showing: movieData['showing'],
               title: movieData['title'],
               release_date: movieData['release_date'],

@@ -2,10 +2,62 @@ import 'package:flutter/material.dart';
 import 'package:moviereport/src/Dummy/movie_list_screen_dummy.dart';
 import 'package:moviereport/src/screen/feed/movie_modify_screen.dart';
 import 'package:moviereport/src/screen/feed/reviews_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
-class MyMovieItem extends StatelessWidget {
+class MyMovieItem extends StatefulWidget {
   final MovieListDummy movie; // Movie 객체를 추가합니다.
   const MyMovieItem({Key? key, required this.movie}) : super(key: key);
+
+  @override
+  State<MyMovieItem> createState() => _MyMovieItemState();
+}
+
+class _MyMovieItemState extends State<MyMovieItem> {
+  // Future<void> deleteData(int movieId) async {
+  //   try {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? token = prefs.getString('token');
+  //     // 서버로부터 데이터를 불러오는 GET 요청
+  //     var response = await http.delete(
+  //       Uri.parse('http://localhost:3000/api/movie/${movieId}/delete'),
+  //       // 헤더에 토큰 추가
+  //       headers: {
+  //         'Authorization': 'Bearer ${token}',
+  //       },
+  //     );
+  //     if (response.statusCode == 200) {
+  //       print('Deleted Successfully');
+  //     } else {
+  //       print('Failed to load movie data');
+  //     }
+  //   } catch (e) {
+  //     print('Errossr: $e');
+  //   }
+  // }
+
+  // Future<void> deleteReview(int movieId) async {
+  //   try {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? token = prefs.getString('token');
+  //     // 서버로부터 데이터를 불러오는 GET 요청
+  //     var response = await http.delete(
+  //       Uri.parse('http://localhost:3000/api/review/${movieId}/delete'),
+  //       // 헤더에 토큰 추가
+  //       headers: {
+  //         'Authorization': 'Bearer ${token}',
+  //       },
+  //     );
+  //     if (response.statusCode == 200) {
+  //       print('리뷰 Successfully');
+  //       deleteData(widget.movie.id);
+  //     } else {
+  //       print('Failed to load movie data');
+  //     }
+  //   } catch (e) {
+  //     print('Errossr: $e');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +75,8 @@ class MyMovieItem extends StatelessWidget {
             child: Container(
               width: 100,
               height: 150,
-              child: Image.asset(
-                movie.image_url,
+              child: Image.network(
+                widget.movie.image_url,
                 fit: BoxFit.cover,
               ),
             ),
@@ -48,12 +100,12 @@ class MyMovieItem extends StatelessWidget {
                                     child: Row(children: [
                                       Padding(
                                         padding: EdgeInsets.only(right: 6),
-                                        child: Text(movie.title,
+                                        child: Text(widget.movie.title,
                                             style: TextStyle(
                                                 fontSize: 20.0,
                                                 fontWeight: FontWeight.bold)),
                                       ),
-                                      Text(movie.genre,
+                                      Text(widget.movie.genre,
                                           style: TextStyle(
                                             color: Color.fromRGBO(
                                                 175, 175, 175, 1),
@@ -64,7 +116,8 @@ class MyMovieItem extends StatelessWidget {
                           Container(
                               margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
                               child: Row(children: [
-                                Text(movie.showing == 1 ? "상영중" : "상영 종료",
+                                Text(
+                                    widget.movie.showing == 1 ? "상영중" : "상영 종료",
                                     style: TextStyle(
                                       color: const Color.fromRGBO(
                                           255, 55, 67, 20), // 폰트 색상을 빨간색으로 설정
@@ -73,9 +126,9 @@ class MyMovieItem extends StatelessWidget {
                                 Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(
-                                        movie.showing == 1
-                                            ? "${movie.release_date} ~ "
-                                            : "${movie.end_date} ~ ${movie.release_date}",
+                                        widget.movie.showing == 1
+                                            ? "${widget.movie.release_date} ~ "
+                                            : "${widget.movie.release_date} ~ ${widget.movie.end_date}",
                                         style: TextStyle(
                                           color:
                                               Color.fromRGBO(175, 175, 175, 1),
@@ -102,7 +155,9 @@ class MyMovieItem extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const MovieModifyScreen()));
+                                                  MovieModifyScreen(
+                                                      movie_id:
+                                                          widget.movie.id)));
                                     },
                                     child: Text("수정",
                                         style: TextStyle(
@@ -116,7 +171,8 @@ class MyMovieItem extends StatelessWidget {
                                     backgroundColor:
                                         Color.fromARGB(255, 236, 19, 19),
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () => {},
+                                  // {deleteReview(widget.movie.id)},
                                   child: Text("삭제",
                                       style: TextStyle(
                                         color:
