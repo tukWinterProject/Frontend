@@ -77,7 +77,7 @@ class _MovieState extends State<Movie> {
             Column(
               children: [
                 Container(
-                  padding: EdgeInsets.only(right: 45),
+                  padding: EdgeInsets.only(right: 80),
                   child: Text(title,
                       style: TextStyle(
                           fontSize: 25.0, fontWeight: FontWeight.bold)),
@@ -85,7 +85,7 @@ class _MovieState extends State<Movie> {
                 Row(
                   children: [
                     Padding(
-                        padding: EdgeInsets.fromLTRB(30, 10, 10, 0),
+                        padding: EdgeInsets.fromLTRB(20, 10, 10, 0),
                         child: Text(showing == 1 ? "상영중" : "상영종료",
                             style: TextStyle(
                               color: const Color.fromRGBO(255, 55, 67, 20),
@@ -93,7 +93,10 @@ class _MovieState extends State<Movie> {
                             ))),
                     Padding(
                       padding: EdgeInsets.only(top: 10),
-                      child: Text(showing != 1 ? release_date : end_date,
+                      child: Text(
+                          showing == 1
+                              ? "${release_date} ~ "
+                              : "${release_date} ~ ${end_date}",
                           style: TextStyle(
                             color: Color.fromRGBO(175, 175, 175, 1),
                             fontSize: 12.0,

@@ -127,8 +127,8 @@ class _MyMovieItemState extends State<MyMovieItem> {
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(
                                         widget.movie.showing == 1
-                                            ? "${widget.movie.release_date} ~ "
-                                            : "${widget.movie.release_date} ~ ${widget.movie.end_date}",
+                                            ? "${widget.movie.release_date.substring(0, widget.movie.release_date.length - 14)} ~ "
+                                            : "${widget.movie.release_date.substring(0, widget.movie.release_date.length - 14)} ~${widget.movie.end_date.substring(0, widget.movie.end_date.length - 14)} ",
                                         style: TextStyle(
                                           color:
                                               Color.fromRGBO(175, 175, 175, 1),
