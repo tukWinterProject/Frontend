@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:moviereport/src/Dummy/review_screen_dummy.dart';
 import 'package:moviereport/src/screen/widget/Review/review_item.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReviewForm extends StatefulWidget {
   final int movie_id;
@@ -30,14 +31,15 @@ class _ReviewFormState extends State<ReviewForm> {
 
   Future<void> submitForm() async {
     try {
-      final token = await storage.read(key: 'access_token');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
 
       var response = await http.post(
         Uri.parse(
             'http://localhost:3000/api/review/${widget.movie_id}'), // Replace with your API endpoint
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $token', // Add token to the request header
+          'Authorization': 'Bearer ${token}', // Add token to the request header
         },
         body: jsonEncode(<String, dynamic>{
           'content': content,
@@ -110,6 +112,7 @@ class _ReviewFormState extends State<ReviewForm> {
 
   Future<void> fetchMovies() async {
     try {
+      print('여긴왜');
       // 서버로부터 데이터를 불러오는 GET 요청
       var response = await http.get(
           Uri.parse('http://localhost:3000/api/review/${widget.movie_id}'));
@@ -158,7 +161,7 @@ class _ReviewFormState extends State<ReviewForm> {
               padding: EdgeInsets.only(left: 2),
               child: TextFormField(
                 style: TextStyle(fontSize: 10),
-                onSaved: (value) => content = value ?? '',
+                onChanged: (value) => content = value,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   hintText: "감상평을 남겨보세요",
@@ -175,10 +178,9 @@ class _ReviewFormState extends State<ReviewForm> {
                 backgroundColor: Color.fromARGB(255, 236, 19, 19),
               ),
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  submitForm();
-                }
+                submitForm();
+                fetchMovies();
+                print(content);
               },
               child: Text("등록하기",
                   style: TextStyle(

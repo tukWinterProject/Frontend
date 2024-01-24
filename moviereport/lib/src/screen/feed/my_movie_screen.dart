@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:moviereport/src/Dummy/my_movie_screen_dummy.dart';
 import 'package:moviereport/src/screen/widget/MyMovie/my_movie_item.dart';
 
-class Page3 extends StatelessWidget {
+class Page3 extends StatefulWidget {
   const Page3({super.key});
 
+  @override
+  State<Page3> createState() => _Page3State();
+}
+
+class _Page3State extends State<Page3> {
   @override
   Widget build(BuildContext context) {
     return Column(

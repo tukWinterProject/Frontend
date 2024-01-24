@@ -31,6 +31,7 @@ class _MovieState extends State<Movie> {
 
         setState(() {
           moviesList = data.map((movieData) {
+            print('무비 가져오기 성공');
             return MovieListDummy(
               id: movieData['id'],
               user_id: movieData[' user_id'],
