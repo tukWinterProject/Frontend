@@ -33,11 +33,11 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
   String title = '';
   String releaseDate = '';
   String endDate = '';
-  bool showing = true;
+  int showing = 0;
   String genre = '';
   String image_url = '';
 
-  void selectShowing(bool selectedShowing) {
+  void selectShowing(int selectedShowing) {
     setState(() {
       showing = selectedShowing;
     });
@@ -291,15 +291,15 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: showing
+                        primary: showing == 1
                             ? Color.fromRGBO(255, 55, 67, 1)
                             : Color.fromARGB(255, 255, 255, 255),
                       ),
-                      onPressed: () => selectShowing(true),
+                      onPressed: () => selectShowing(1),
                       child: Text(
                         "상영중",
                         style: TextStyle(
-                          color: showing
+                          color: showing == 1
                               ? Colors.white
                               : Color.fromRGBO(255, 55, 67, 1),
                         ),
@@ -307,15 +307,15 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: !showing
+                        primary: showing == 0
                             ? Color.fromRGBO(255, 55, 67, 1)
                             : Color.fromARGB(255, 255, 255, 255),
                       ),
-                      onPressed: () => selectShowing(false),
+                      onPressed: () => selectShowing(0),
                       child: Text(
                         "상영 종료",
                         style: TextStyle(
-                          color: !showing
+                          color: showing == 0
                               ? Colors.white
                               : Color.fromRGBO(255, 55, 67, 1),
                         ),
