@@ -30,9 +30,9 @@ class Reviews extends StatelessWidget {
               child: Text("리뷰",
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
             ),
-            // Movie(
-            //   movie_id: movieId,
-            // ),
+            Movie(
+              movie_id: movieId,
+            ),
             ReviewForm(
               movie_id: movieId,
             ),

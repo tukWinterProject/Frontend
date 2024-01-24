@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:moviereport/src/Dummy/my_movie_screen_dummy.dart';
+import 'package:moviereport/src/Dummy/movie_list_screen_dummy.dart';
 import 'package:moviereport/src/screen/feed/movie_modify_screen.dart';
 import 'package:moviereport/src/screen/feed/reviews_screen.dart';
 
 class MyMovieItem extends StatelessWidget {
-  final MyMovieListDummy movie; // Movie 객체를 추가합니다.
+  final MovieListDummy movie; // Movie 객체를 추가합니다.
   const MyMovieItem({Key? key, required this.movie}) : super(key: key);
 
   @override

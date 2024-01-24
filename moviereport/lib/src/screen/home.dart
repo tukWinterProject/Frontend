@@ -44,10 +44,8 @@ class Home extends StatelessWidget {
               child: TabBarView(
                 children: const [
                   Page1(),
-                  Reviews(
-                    movieId: 2,
-                  ),
-                  Page3(),
+                  MovieListScreen(),
+                  MyMovieScreen(),
                 ],
               ),
             )));

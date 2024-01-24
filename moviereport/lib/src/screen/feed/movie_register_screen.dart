@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'package:moviereport/src/screen/feed/movie_list_screen.dart';
 import 'dart:convert';
 import 'package:moviereport/src/screen/widget/MovieRegister/label.dart';
@@ -69,40 +68,29 @@ class _MovieRegisterScreenState extends State<MovieRegisterScreen> {
   Future<void> submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
       try {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? token = prefs.getString('token');
+
         var uri = Uri.parse('http://localhost:3000/api/movie/register');
-        MultipartRequest request = new http.MultipartRequest('POST', uri);
-        request.headers['Authorization'] = 'Bearer ${token}';
-        request.fields['title'] = title;
-        request.fields['release_date'] = releaseDate;
-        request.fields['end_date'] = endDate;
-        request.fields['showing'] = showing.toString();
-        request.fields['genre'] = genre;
 
-        // var request = http.MultipartRequest('POST', uri)
-        //   ..headers['Authorization'] = 'Bearer ${token}'
-        //   ..headers['Content-Type'] = 'multipart/form-data'
-        //   ..fields['title'] = title
-        //   ..fields['release_date'] = releaseDate
-        //   ..fields['end_date'] = endDate
-        //   ..fields['showing'] = showing.toString()
-        //   ..fields['genre'] = genre;
+        var request = http.MultipartRequest('POST', uri)
+          ..headers['Authorization'] = 'Bearer ${token}'
+          ..headers['Content-Type'] = 'multipart/form-data'
+          ..fields['title'] = title
+          ..fields['release_date'] = releaseDate
+          ..fields['end_date'] = endDate
+          ..fields['showing'] = showing.toString()
+          ..fields['genre'] = genre;
 
-        // if (image_url.isNotEmpty) {
-        //   var imageFile = await http.MultipartFile.fromPath(
-        //     'image_url', // 서버에서 기대하는 필드명
-        //     image_url,
-        //     contentType: MediaType('image', 'jpeg'), // 이미지 형식에 따라 변경 가능
-        //   );
-        //   request.files.add(imageFile);
-        // }
-
-        // var response = await request.send();
-        request.files
-            .add(await http.MultipartFile.fromPath('image_url', image_url));
+        if (image_url.isNotEmpty) {
+          var imageFile = await http.MultipartFile.fromPath(
+            'image_url', // 서버에서 기대하는 필드명
+            image_url,
+            contentType: MediaType('image', 'jpeg'), // 이미지 형식에 따라 변경 가능
+          );
+          request.files.add(imageFile);
+        }
 
         var response = await request.send();
 
