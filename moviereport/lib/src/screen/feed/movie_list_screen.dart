@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:moviereport/src/Dummy/movie_list_screen_dummy.dart';
 import 'package:moviereport/src/screen/feed/movie_register_screen.dart';
 import 'package:moviereport/src/screen/widget/MovieList/movie_item.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MovieListScreen extends StatefulWidget {
   const MovieListScreen({super.key});
@@ -14,6 +16,7 @@ class MovieListScreen extends StatefulWidget {
 
 class _MovieListScreenState extends State<MovieListScreen> {
   List<MovieListDummy> moviesList = [];
+  final storage = FlutterSecureStorage();
 
   @override
   void initState() {
@@ -27,8 +30,9 @@ class _MovieListScreenState extends State<MovieListScreen> {
       var response =
           await http.get(Uri.parse('http://localhost:3000/api/movie'));
       if (response.statusCode == 200) {
+        print("영화 리스트 불러오기 성ㄴ");
         List<dynamic> data = json.decode(response.body);
-
+        print(data);
         setState(() {
           moviesList = data.map((movieData) {
             return MovieListDummy(
@@ -47,7 +51,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
         print('Failed to load movie data');
       }
     } catch (e) {
-      print('Error: $e');
+      print('Errossr: $e');
     }
   }
 

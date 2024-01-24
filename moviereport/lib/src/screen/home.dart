@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviereport/src/screen/feed/page1.dart';
+import 'package:moviereport/src/screen/feed/reviews_screen.dart';
 import 'package:moviereport/src/shared/ProfileDrawer.dart';
 import 'package:moviereport/src/screen/feed/movie_list_screen.dart';
 import 'package:moviereport/src/screen/feed/my_movie_screen.dart';
@@ -43,7 +44,9 @@ class Home extends StatelessWidget {
               child: TabBarView(
                 children: const [
                   Page1(),
-                  MovieListScreen(),
+                  Reviews(
+                    movieId: 2,
+                  ),
                   Page3(),
                 ],
               ),
